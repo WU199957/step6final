@@ -1,0 +1,64 @@
+import entity.Position;
+import service.NewSaveTradeInformation;
+import service.NewStockSystemLogin;
+import service.newPB;
+import show.NewStockSystemUtil;
+import show.showTradeInformationFromCSV;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Main {
+    public final static String output ="/Users/wuyingtao/Desktop/step6/output.csv";
+    public final static String information ="/Users/wuyingtao/Desktop/step6/trade_information.csv";
+
+    public static void main(String[] args) throws IOException {
+        Map<String, BigDecimal> newMarketPrices = null;
+        List<Position.Stock> stocks = NewStockSystemUtil.readStocksFromCSV(output);
+        newPB portfolio = new newPB(information);
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("欢迎来到模拟证券系统");
+            System.out.println("1. 股票信息展示");
+            System.out.println("2. 股票信息登录");
+            System.out.println("3. 买卖");
+            System.out.println("4. 买卖查询");
+            System.out.println("9. 退出程序");
+            System.out.print("请选择操作：");
+            int choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    NewStockSystemUtil.showList(stocks);
+                    break;
+                case 2:
+                    NewStockSystemLogin.login(stocks);
+                    break;
+                case 3:
+                    NewSaveTradeInformation.recordTradeInformation(stocks);
+                    portfolio.update(information,newMarketPrices);
+                    break;
+                case 4:
+                    showTradeInformationFromCSV.printTradeInformation(information);
+                    break;
+                case 5:
+                    newPB.print(portfolio);
+                    break;
+                case 6:
+                    newMarketPrices = portfolio.getMarketPrice();
+                    portfolio.updateMarketPrice(newMarketPrices);
+                    break;
+                case 9:
+                    // 退出程序
+                    System.out.println("感谢使用模拟证券系统，再见！");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("无效的选择，请重新选择！");
+                    break;
+            }
+        }
+    }
+}
